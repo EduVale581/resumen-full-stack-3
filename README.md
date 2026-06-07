@@ -15,8 +15,8 @@
 | 05 | [Database per Service](./05_database_per_service.md) | Patrón de base de datos por microservicio |
 | 06 | [Testing](./06_testing.md) | Pirámide de tests, contract testing y chaos testing |
 | 07 | [Tipos de Arquitectura](./07_tipos_arquitectura.md) | SPA, SSR, SSG, Serverless, Hexagonal y más |
-| 08 | [Buenas Prácticas & Conclusión](./08_buenas_practicas_conclusion.md) | SOLID, DRY, KISS, YAGNI, TDD y cierre general |
-| 09 | [GitFlow & Git](./09_gitflow_comandos_errores.md) | Modelo de ramas, comandos esenciales y errores comunes |
+| 08 | [GitFlow & Git](./08_gitflow_comandos_errores.md) | Modelo de ramas, comandos esenciales y errores comunes |
+| 09 | [Buenas Prácticas & Conclusión](./09_buenas_practicas_conclusion.md) | SOLID, DRY, KISS, YAGNI, TDD y cierre general |
 
 ---
 
