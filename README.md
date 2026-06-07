@@ -62,17 +62,6 @@ Onboarding equipo → Comparte el repositorio completo
 
 ---
 
-## 👥 Contribuir
-
-Si quieres mejorar algún documento:
-
-1. Haz un fork del repositorio
-2. Crea una rama: `git checkout -b feat/mejora-descripcion`
-3. Commitea con conventional commits: `git commit -m "docs: improve microservices examples"`
-4. Abre un Pull Request describiendo los cambios
-
----
-
 ## 📄 Licencia
 
-MIT — Libre para usar, compartir y modificar con atribución.
+MIT — Libre para usar y compartir con atribución.
