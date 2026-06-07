@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patrones de Diseño</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #09090b;
+    color: #fafafa;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .container { max-width: 920px; margin: 0 auto; }
+
+  header { margin-bottom: 40px; }
+  .chip {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    background: #3b82f6;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+  h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  h1 em { color: #3b82f6; font-style: normal; }
+  .sub { color: #71717a; font-size: 0.95rem; }
+
+  .patterns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+  .pattern {
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 12px;
+    padding: 22px 18px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .pattern:hover { border-color: #3b82f6; }
+  .p-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: #3b82f6;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .p-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+  .p-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .p-desc { font-size: 0.78rem; color: #a1a1aa; line-height: 1.6; margin-bottom: 14px; }
+  .p-example {
+    background: #09090b;
+    border: 1px solid #27272a;
+    border-left: 3px solid #3b82f6;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    color: #60a5fa;
+  }
+
+  /* Colores por categoría */
+  .cat-res { border-top: 3px solid #10b981; }
+  .cat-res .p-num { color: #10b981; }
+  .cat-res:hover { border-color: #10b981; }
+  .cat-res .p-example { border-left-color: #10b981; color: #34d399; }
+
+  .cat-data { border-top: 3px solid #f59e0b; }
+  .cat-data .p-num { color: #f59e0b; }
+  .cat-data:hover { border-color: #f59e0b; }
+  .cat-data .p-example { border-left-color: #f59e0b; color: #fcd34d; }
+
+  .cat-com { border-top: 3px solid #8b5cf6; }
+  .cat-com .p-num { color: #8b5cf6; }
+  .cat-com:hover { border-color: #8b5cf6; }
+  .cat-com .p-example { border-left-color: #8b5cf6; color: #a78bfa; }
+
+  .legend {
+    display: flex; gap: 20px; margin-top: 28px; padding: 16px 20px;
+    background:#18181b; border:1px solid #27272a; border-radius:10px;
+    flex-wrap:wrap;
+  }
+  .leg-item { display:flex; align-items:center; gap:8px; font-size:0.78rem; color:#71717a; }
+  .leg-dot { width:10px; height:10px; border-radius:50%; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <span class="chip">// DESIGN_PATTERNS</span>
+    <h1>Patrones de <em>Diseño</em><br>en Microservicios</h1>
+    <p class="sub">Soluciones probadas para problemas recurrentes en arquitecturas distribuidas</p>
+  </header>
+
+  <div class="patterns">
+    <!-- Resiliencia -->
+    <div class="pattern cat-res">
+      <span class="p-num">RESILIENCIA · 01</span>
+      <span class="p-icon">⚡</span>
+      <div class="p-name">Circuit Breaker</div>
+      <p class="p-desc">Detiene llamadas a un servicio fallido para evitar cascada de errores. Tiene estados: cerrado, abierto y semiabierto.</p>
+      <div class="p-example">Estado: OPEN<br>→ Fallback activado</div>
+    </div>
+
+    <div class="pattern cat-res">
+      <span class="p-num">RESILIENCIA · 02</span>
+      <span class="p-icon">🔄</span>
+      <div class="p-name">Retry Pattern</div>
+      <p class="p-desc">Reintenta automáticamente operaciones fallidas con backoff exponencial para evitar sobrecargar el servicio destino.</p>
+      <div class="p-example">Intent 1 → falla<br>Intent 2 (2s) → falla<br>Intent 3 (4s) → ✓</div>
+    </div>
+
+    <div class="pattern cat-res">
+      <span class="p-num">RESILIENCIA · 03</span>
+      <span class="p-icon">🛡️</span>
+      <div class="p-name">Bulkhead</div>
+      <p class="p-desc">Aísla recursos entre servicios (hilos, conexiones) para que el fallo de uno no consuma los recursos de otros.</p>
+      <div class="p-example">Pool A: 10 threads<br>Pool B: 10 threads<br>→ Aislados</div>
+    </div>
+
+    <!-- Datos -->
+    <div class="pattern cat-data">
+      <span class="p-num">DATOS · 01</span>
+      <span class="p-icon">📝</span>
+      <div class="p-name">Saga Pattern</div>
+      <p class="p-desc">Gestiona transacciones distribuidas como una serie de transacciones locales con compensaciones en caso de fallo.</p>
+      <div class="p-example">Crea orden → Reserva<br>stock → Cobra pago<br>↩ Compensar si falla</div>
+    </div>
+
+    <div class="pattern cat-data">
+      <span class="p-num">DATOS · 02</span>
+      <span class="p-icon">🗂️</span>
+      <div class="p-name">CQRS</div>
+      <p class="p-desc">Separa las operaciones de escritura (Commands) de las de lectura (Queries) usando modelos y bases de datos distintas.</p>
+      <div class="p-example">Write DB → Events<br>↓<br>Read DB (optimized)</div>
+    </div>
+
+    <div class="pattern cat-data">
+      <span class="p-num">DATOS · 03</span>
+      <span class="p-icon">📡</span>
+      <div class="p-name">Event Sourcing</div>
+      <p class="p-desc">El estado de la aplicación se determina reproduciendo una secuencia de eventos inmutables almacenados.</p>
+      <div class="p-example">Evento1 + Evento2<br>+ Evento3 = Estado<br>actual reconstruido</div>
+    </div>
+
+    <!-- Comunicación -->
+    <div class="pattern cat-com">
+      <span class="p-num">COMUNICACIÓN · 01</span>
+      <span class="p-icon">🎭</span>
+      <div class="p-name">Sidecar</div>
+      <p class="p-desc">Despliega capacidades auxiliares (logging, proxy, seguridad) como contenedor separado junto al servicio principal.</p>
+      <div class="p-example">App Container +<br>Sidecar (Envoy)<br>→ Service Mesh</div>
+    </div>
+
+    <div class="pattern cat-com">
+      <span class="p-num">COMUNICACIÓN · 02</span>
+      <span class="p-icon">🔍</span>
+      <div class="p-name">Service Discovery</div>
+      <p class="p-desc">Los servicios se registran y se localizan dinámicamente sin necesidad de IPs hardcodeadas. Client-side o server-side.</p>
+      <div class="p-example">Service A → Registry<br>"¿Dónde está B?"<br>→ ip:port dinámico</div>
+    </div>
+
+    <div class="pattern cat-com">
+      <span class="p-num">COMUNICACIÓN · 03</span>
+      <span class="p-icon">🚦</span>
+      <div class="p-name">Strangler Fig</div>
+      <p class="p-desc">Migra gradualmente un monolito a microservicios reemplazando funcionalidades una a una, sin big bang.</p>
+      <div class="p-example">Monolito → 80%<br>Micro nuevo → 20%<br>→ Migración gradual</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:#10b981"></div>Resiliencia — fallos y tolerancia</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#f59e0b"></div>Datos — consistencia y estado</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#8b5cf6"></div>Comunicación — integración y migración</div>
+  </div>
+</div>
+</body>
+</html>

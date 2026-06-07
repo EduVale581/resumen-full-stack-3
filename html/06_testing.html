@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Testing en Microservicios</title>
+<link href="https://fonts.googleapis.com/css2?family=Righteous&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0f172a;
+    color: #f8fafc;
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  .container { max-width: 920px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 40px;
+    padding: 28px 32px;
+    background: linear-gradient(135deg, #1e3a5f, #1e293b);
+    border-radius: 20px;
+    border: 1px solid #334155;
+  }
+  .header-icon { font-size: 4rem; flex-shrink: 0; }
+  .header h1 {
+    font-family: 'Righteous', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .header h1 span { color: #38bdf8; }
+  .header p { color: #94a3b8; font-size: 0.9rem; line-height: 1.5; }
+
+  /* Pyramid */
+  .pyramid-section { margin-bottom: 36px; }
+  .pyramid-section h2 {
+    font-family: 'Righteous', sans-serif;
+    font-size: 1.1rem;
+    color: #38bdf8;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+  }
+  .pyramid { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+
+  .pyr-level {
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    gap: 16px;
+    transition: transform 0.15s;
+  }
+  .pyr-level:hover { transform: scaleX(1.01); }
+
+  .l1 { width: 100%; background: linear-gradient(90deg, #1e3a5f, #0ea5e9); border: 1px solid #0ea5e9; }
+  .l2 { width: 85%; background: linear-gradient(90deg, #1e3358, #3b82f6); border: 1px solid #3b82f6; }
+  .l3 { width: 70%; background: linear-gradient(90deg, #2d1f5e, #8b5cf6); border: 1px solid #8b5cf6; }
+  .l4 { width: 55%; background: linear-gradient(90deg, #3d1a2e, #ec4899); border: 1px solid #ec4899; }
+
+  .pyr-label {
+    font-family: 'Righteous', sans-serif;
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+  .pyr-desc { font-size: 0.78rem; color: rgba(255,255,255,0.8); flex: 1; }
+  .pyr-count {
+    font-family: 'Righteous', sans-serif;
+    font-size: 0.75rem;
+    background: rgba(255,255,255,0.15);
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .pyr-tags { display: flex; gap: 6px; flex-wrap:wrap; }
+  .pyr-tag {
+    background: rgba(255,255,255,0.15);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.65rem;
+    font-weight: 700;
+  }
+
+  /* Strategy cards */
+  .strategies { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-bottom: 28px; }
+  .strat {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .strat::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  }
+  .s1::before { background: #0ea5e9; }
+  .s2::before { background: #8b5cf6; }
+  .s3::before { background: #10b981; }
+  .s4::before { background: #f59e0b; }
+
+  .strat-icon { font-size: 2rem; margin-bottom: 10px; }
+  .strat h3 { font-family: 'Righteous', sans-serif; font-size: 1rem; margin-bottom: 8px; }
+  .strat p { font-size: 0.8rem; color: #94a3b8; line-height: 1.6; margin-bottom: 12px; }
+  .strat-tool {
+    background: #0f172a;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.72rem;
+    color: #38bdf8;
+    font-weight: 700;
+    display: inline-block;
+  }
+
+  /* Métricas */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 12px;
+  }
+  .metric {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 18px 14px;
+    text-align: center;
+  }
+  .metric-val {
+    font-family: 'Righteous', sans-serif;
+    font-size: 2rem;
+    color: #38bdf8;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .metric-label { font-size: 0.75rem; color: #64748b; }
+
+  .sec-title {
+    font-family: 'Righteous', sans-serif;
+    font-size: 0.9rem;
+    color: #64748b;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    margin-top: 28px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-icon">🧪</div>
+    <div>
+      <h1>Testing en<br><span>Microservicios</span></h1>
+      <p>Una estrategia de testing robusta es fundamental para garantizar calidad en sistemas distribuidos. La pirámide de testing guía el balance correcto.</p>
+    </div>
+  </div>
+
+  <!-- Pirámide de testing -->
+  <div class="pyramid-section">
+    <h2>🔺 La Pirámide de Testing</h2>
+    <div class="pyramid">
+
+      <div class="pyr-level l4">
+        <div class="pyr-label">🖥️ E2E</div>
+        <div class="pyr-desc">Validan flujos completos del usuario. Lentos y costosos — usar pocos.</div>
+        <div>
+          <div class="pyr-tags"><span class="pyr-tag">Cypress</span><span class="pyr-tag">Playwright</span></div>
+        </div>
+        <div class="pyr-count">≈ 5%</div>
+      </div>
+
+      <div class="pyr-level l3">
+        <div class="pyr-label">🔗 Integración</div>
+        <div class="pyr-desc">Prueban la interacción entre dos o más servicios. Incluyen Contract Tests.</div>
+        <div>
+          <div class="pyr-tags"><span class="pyr-tag">Pact</span><span class="pyr-tag">TestContainers</span></div>
+        </div>
+        <div class="pyr-count">≈ 15%</div>
+      </div>
+
+      <div class="pyr-level l2">
+        <div class="pyr-label">🧩 Componente</div>
+        <div class="pyr-desc">Prueban un microservicio completo en aislamiento con sus dependencias mockeadas.</div>
+        <div>
+          <div class="pyr-tags"><span class="pyr-tag">WireMock</span><span class="pyr-tag">MockServer</span></div>
+        </div>
+        <div class="pyr-count">≈ 30%</div>
+      </div>
+
+      <div class="pyr-level l1">
+        <div class="pyr-label">⚡ Unitarios</div>
+        <div class="pyr-desc">Prueban funciones y clases de forma aislada. Rápidos, baratos y abundantes — la base.</div>
+        <div>
+          <div class="pyr-tags"><span class="pyr-tag">Jest</span><span class="pyr-tag">JUnit</span><span class="pyr-tag">Pytest</span></div>
+        </div>
+        <div class="pyr-count">≈ 50%</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Estrategias especiales -->
+  <div class="sec-title">Estrategias clave en microservicios</div>
+  <div class="strategies">
+    <div class="strat s1">
+      <div class="strat-icon">📜</div>
+      <h3>Contract Testing</h3>
+      <p>Verifica que el contrato entre consumidor y proveedor de una API se mantiene válido. Evita breaking changes en producción.</p>
+      <span class="strat-tool">Pact · Spring Contract</span>
+    </div>
+    <div class="strat s2">
+      <div class="strat-icon">🎭</div>
+      <h3>Consumer-Driven Contracts</h3>
+      <p>El consumidor define el contrato que necesita. El proveedor debe cumplirlo. Invierte la dirección del testing.</p>
+      <span class="strat-tool">Pact Broker</span>
+    </div>
+    <div class="strat s3">
+      <div class="strat-icon">🐒</div>
+      <h3>Chaos Testing</h3>
+      <p>Inyecta fallos deliberados en producción para validar la resiliencia del sistema y detectar puntos débiles reales.</p>
+      <span class="strat-tool">Chaos Monkey · Gremlin</span>
+    </div>
+    <div class="strat s4">
+      <div class="strat-icon">🏋️</div>
+      <h3>Performance Testing</h3>
+      <p>Prueba la capacidad del sistema bajo carga. Identifica cuellos de botella antes de que lleguen a producción.</p>
+      <span class="strat-tool">k6 · Gatling · JMeter</span>
+    </div>
+  </div>
+
+  <!-- Métricas objetivo -->
+  <div class="sec-title">Métricas objetivo de calidad</div>
+  <div class="metrics">
+    <div class="metric">
+      <span class="metric-val">80%+</span>
+      <div class="metric-label">Code Coverage</div>
+    </div>
+    <div class="metric">
+      <span class="metric-val">&lt;5s</span>
+      <div class="metric-label">Tests unitarios</div>
+    </div>
+    <div class="metric">
+      <span class="metric-val">0</span>
+      <div class="metric-label">Flaky tests</div>
+    </div>
+    <div class="metric">
+      <span class="metric-val">CI/CD</span>
+      <div class="metric-label">Pipeline automático</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Gateway</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e3a5f 100%);
+    color: #fff;
+    font-family: 'Lato', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+
+  .header { text-align: center; margin-bottom: 48px; }
+  .header h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .header h1 span { color: #fbbf24; }
+  .header p { color: #a5b4fc; font-size: 1rem; }
+
+  /* Arquitectura visual */
+  .arch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 40px;
+  }
+
+  /* Clients */
+  .clients { display: flex; gap: 16px; justify-content: center; margin-bottom: 0; }
+  .client {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 14px 20px;
+    text-align: center;
+    width: 120px;
+  }
+  .client .ci { font-size: 2rem; margin-bottom: 6px; }
+  .client p { font-size: 0.75rem; color: #c7d2fe; }
+
+  /* Arrows down */
+  .arrows { display: flex; gap: 16px; justify-content: center; padding: 8px 0; }
+  .arr { width: 120px; text-align: center; color: #fbbf24; font-size: 1.4rem; }
+
+  /* Gateway */
+  .gateway {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #1e1b4b;
+    border-radius: 16px;
+    padding: 24px 40px;
+    text-align: center;
+    width: 100%;
+    max-width: 640px;
+    position: relative;
+  }
+  .gateway h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    margin-bottom: 12px;
+  }
+  .gw-features {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .gw-feat {
+    background: rgba(0,0,0,0.12);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  /* Arrow down to services */
+  .down-arrow { color: #a5b4fc; font-size: 1.5rem; padding: 8px 0; }
+
+  /* Services */
+  .services { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .service {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(165,180,252,0.3);
+    border-radius: 14px;
+    padding: 18px 16px;
+    text-align: center;
+    width: 130px;
+  }
+  .service .si { font-size: 2rem; margin-bottom: 8px; }
+  .service h4 { font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; }
+  .service p { font-size: 0.7rem; color: #a5b4fc; }
+
+  /* Functions grid */
+  .functions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .fn-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 18px 14px;
+    text-align: center;
+  }
+  .fn-card .fn-icon { font-size: 1.8rem; margin-bottom: 8px; }
+  .fn-card h4 { font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; color: #fbbf24; }
+  .fn-card p { font-size: 0.72rem; color: #a5b4fc; line-height: 1.5; }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    color: #c7d2fe;
+    text-align: center;
+    margin-bottom: 16px;
+    margin-top: 36px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>API <span>Gateway</span></h1>
+    <p>El guardián y orquestador de entrada a tu ecosistema de microservicios</p>
+  </div>
+
+  <!-- Arquitectura -->
+  <div class="arch">
+    <!-- Clientes -->
+    <div class="clients">
+      <div class="client"><div class="ci">📱</div><p>App móvil</p></div>
+      <div class="client"><div class="ci">🖥️</div><p>Web App</p></div>
+      <div class="client"><div class="ci">🔌</div><p>3rd Party</p></div>
+      <div class="client"><div class="ci">🤖</div><p>IoT / Bot</p></div>
+    </div>
+
+    <div class="arrows">
+      <div class="arr">↓</div>
+      <div class="arr">↓</div>
+      <div class="arr">↓</div>
+      <div class="arr">↓</div>
+    </div>
+
+    <!-- Gateway -->
+    <div class="gateway">
+      <h2>🌐 API GATEWAY</h2>
+      <div class="gw-features">
+        <span class="gw-feat">Auth / JWT</span>
+        <span class="gw-feat">Rate Limiting</span>
+        <span class="gw-feat">Routing</span>
+        <span class="gw-feat">Load Balancing</span>
+        <span class="gw-feat">SSL/TLS</span>
+        <span class="gw-feat">Caching</span>
+        <span class="gw-feat">Logging</span>
+        <span class="gw-feat">Transformación</span>
+      </div>
+    </div>
+
+    <div class="down-arrow">↓</div>
+
+    <!-- Services -->
+    <div class="services">
+      <div class="service"><div class="si">👤</div><h4>Auth</h4><p>:3001</p></div>
+      <div class="service"><div class="si">📦</div><h4>Pedidos</h4><p>:3002</p></div>
+      <div class="service"><div class="si">💳</div><h4>Pagos</h4><p>:3003</p></div>
+      <div class="service"><div class="si">🛒</div><h4>Catálogo</h4><p>:3004</p></div>
+      <div class="service"><div class="si">🔔</div><h4>Notif.</h4><p>:3005</p></div>
+    </div>
+  </div>
+
+  <!-- Funciones clave -->
+  <div class="section-title">¿Qué hace el API Gateway?</div>
+  <div class="functions">
+    <div class="fn-card">
+      <div class="fn-icon">🔀</div>
+      <h4>Enrutamiento</h4>
+      <p>Dirige cada request al microservicio correcto según la ruta y método HTTP.</p>
+    </div>
+    <div class="fn-card">
+      <div class="fn-icon">🔐</div>
+      <h4>Autenticación</h4>
+      <p>Valida tokens JWT o API keys antes de que la petición llegue a los servicios.</p>
+    </div>
+    <div class="fn-card">
+      <div class="fn-icon">🚦</div>
+      <h4>Rate Limiting</h4>
+      <p>Limita el número de requests por cliente para proteger los servicios del abuso.</p>
+    </div>
+    <div class="fn-card">
+      <div class="fn-icon">⚡</div>
+      <h4>Caché</h4>
+      <p>Almacena respuestas frecuentes reduciendo la carga en los microservicios.</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

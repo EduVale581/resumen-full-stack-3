@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microservicios</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0f1e;
+    --card: #111827;
+    --accent: #00f5c4;
+    --accent2: #7c3aed;
+    --text: #f0f4ff;
+    --muted: #8892b0;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+    background-image: radial-gradient(ellipse at 20% 10%, rgba(124,58,237,0.15) 0%, transparent 50%),
+                      radial-gradient(ellipse at 80% 90%, rgba(0,245,196,0.1) 0%, transparent 50%);
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+  .badge {
+    display: inline-block;
+    background: rgba(0,245,196,0.1);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 16px;
+  }
+  h1 span { color: var(--accent); }
+  .subtitle {
+    color: var(--muted);
+    font-size: 1.1rem;
+    max-width: 600px;
+    line-height: 1.6;
+    margin-bottom: 50px;
+  }
+
+  /* Monolith vs Microservices */
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 50px;
+  }
+  .mono-box {
+    background: #1a1a2e;
+    border: 2px solid #ef4444;
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .mono-box h3 { font-family: 'Syne',sans-serif; color: #ef4444; margin-bottom: 16px; font-size:1rem; letter-spacing:1px; }
+  .mono-block {
+    background: #2d1b1b;
+    border: 1px solid #ef444440;
+    border-radius: 8px;
+    padding: 28px 20px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #fca5a5;
+    position: relative;
+  }
+  .mono-block::before {
+    content:'⚠ Todo acoplado';
+    display:block; font-size:0.7rem; color:#ef4444; margin-bottom:8px; letter-spacing:1px;
+  }
+  .micro-box {
+    background: #0d1f1a;
+    border: 2px solid var(--accent);
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .micro-box h3 { font-family:'Syne',sans-serif; color:var(--accent); margin-bottom:16px; font-size:1rem; letter-spacing:1px; }
+  .services-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .svc {
+    background: rgba(0,245,196,0.08);
+    border: 1px solid rgba(0,245,196,0.25);
+    border-radius: 8px;
+    padding: 12px 10px;
+    text-align:center;
+    font-size:0.78rem;
+    color: var(--accent);
+  }
+  .svc .icon { font-size:1.4rem; display:block; margin-bottom:4px; }
+  .arrow-mid { font-size:2rem; color:var(--muted); text-align:center; }
+
+  /* Features */
+  .features { display:grid; grid-template-columns: repeat(3,1fr); gap:16px; margin-bottom:50px; }
+  .feat {
+    background: var(--card);
+    border: 1px solid #1e2d45;
+    border-radius: 14px;
+    padding: 24px 20px;
+    position:relative;
+    overflow:hidden;
+    transition: transform 0.2s;
+  }
+  .feat::before {
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .feat-icon { font-size:2rem; margin-bottom:12px; }
+  .feat h4 { font-family:'Syne',sans-serif; font-size:0.95rem; margin-bottom:8px; }
+  .feat p { font-size:0.82rem; color:var(--muted); line-height:1.5; }
+
+  /* Flujo */
+  .flow {
+    background: var(--card);
+    border:1px solid #1e2d45;
+    border-radius:16px;
+    padding:30px;
+  }
+  .flow h3 { font-family:'Syne',sans-serif; margin-bottom:24px; color:var(--accent); font-size:1rem; letter-spacing:1px; text-transform:uppercase; }
+  .flow-steps { display:flex; gap:0; align-items:center; flex-wrap:wrap; }
+  .step {
+    background: rgba(0,245,196,0.07);
+    border:1px solid rgba(0,245,196,0.2);
+    border-radius:10px;
+    padding:14px 18px;
+    flex:1; min-width:100px;
+    text-align:center;
+    font-size:0.8rem;
+  }
+  .step .n { font-family:'Syne',sans-serif; font-size:1.4rem; color:var(--accent); display:block; }
+  .step-arrow { color:var(--accent); font-size:1.2rem; padding:0 8px; flex-shrink:0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="badge">Arquitectura de Software</div>
+  <h1>¿Qué son los<br><span>Microservicios?</span></h1>
+  <p class="subtitle">Un estilo arquitectónico donde una aplicación se construye como un conjunto de servicios pequeños, independientes y desplegables por separado.</p>
+
+  <div class="comparison">
+    <div class="mono-box">
+      <h3>🧱 MONOLITO</h3>
+      <div class="mono-block">
+        UI · Lógica de negocio<br>Base de datos · Auth<br>Pagos · Notificaciones<br>Reportes · Cache<br><br>
+        <small style="color:#ef4444">↓ Un solo despliege gigante ↓</small>
+      </div>
+    </div>
+    <div class="arrow-mid">→</div>
+    <div class="micro-box">
+      <h3>⚡ MICROSERVICIOS</h3>
+      <div class="services-grid">
+        <div class="svc"><span class="icon">👤</span>Auth</div>
+        <div class="svc"><span class="icon">💳</span>Pagos</div>
+        <div class="svc"><span class="icon">📦</span>Pedidos</div>
+        <div class="svc"><span class="icon">🔔</span>Alertas</div>
+        <div class="svc"><span class="icon">📊</span>Reports</div>
+        <div class="svc"><span class="icon">🛒</span>Catálogo</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feat">
+      <div class="feat-icon">🔀</div>
+      <h4>Independencia</h4>
+      <p>Cada servicio se despliega, escala y actualiza de forma autónoma sin afectar a los demás.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">⚙️</div>
+      <h4>Tecnología libre</h4>
+      <p>Cada equipo elige su stack: Node.js, Python, Go, Java… según las necesidades del servicio.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📡</div>
+      <h4>Comunicación via API</h4>
+      <p>Los servicios se comunican mediante APIs REST, gRPC o mensajería asíncrona (Kafka, RabbitMQ).</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🚀</div>
+      <h4>Escalado granular</h4>
+      <p>Solo escalas el servicio que lo necesita, ahorrando recursos e infraestructura.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🛡️</div>
+      <h4>Tolerancia a fallos</h4>
+      <p>Si un servicio falla, los demás continúan funcionando. El sistema es resiliente por diseño.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">👥</div>
+      <h4>Equipos autónomos</h4>
+      <p>Cada equipo es dueño de su servicio completo: desarrollo, despliegue y operación.</p>
+    </div>
+  </div>
+
+  <div class="flow">
+    <h3>Ciclo de vida de un microservicio</h3>
+    <div class="flow-steps">
+      <div class="step"><span class="n">①</span>Diseño</div>
+      <div class="step-arrow">→</div>
+      <div class="step"><span class="n">②</span>Desarrollo</div>
+      <div class="step-arrow">→</div>
+      <div class="step"><span class="n">③</span>Testing</div>
+      <div class="step-arrow">→</div>
+      <div class="step"><span class="n">④</span>Contenedor</div>
+      <div class="step-arrow">→</div>
+      <div class="step"><span class="n">⑤</span>Despliegue</div>
+      <div class="step-arrow">→</div>
+      <div class="step"><span class="n">⑥</span>Monitoreo</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

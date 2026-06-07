@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tipos de Arquitectura</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=IBM+Plex+Mono:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #fafaf7;
+    --ink: #1c1c1c;
+    --front-c: #e63946;
+    --back-c:  #2b6cb0;
+    --front-bg: #fff1f2;
+    --back-bg:  #ebf4ff;
+    --border: #e0e0d8;
+    --muted: #7a7a72;
+    --code-bg: #1c1c1c;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Lato', sans-serif;
+    min-height: 100vh;
+    padding: 44px 22px;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+
+  /* HEADER */
+  .page-header {
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 24px;
+    margin-bottom: 44px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 20px;
+  }
+  .page-header h1 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 800;
+    line-height: 1.0;
+  }
+  .page-header h1 .r { color: var(--front-c); }
+  .page-header h1 .b { color: var(--back-c); }
+  .page-header p { color: var(--muted); font-size: 0.88rem; text-align: right; max-width: 260px; line-height: 1.5; }
+
+  /* SECTION LABEL */
+  .sec-label {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px;
+    margin-top: 40px;
+  }
+  .sec-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .pill-f { background: var(--front-c); color: #fff; }
+  .pill-b { background: var(--back-c);  color: #fff; }
+  .sec-line { flex: 1; height: 2px; }
+  .line-f { background: var(--front-c); }
+  .line-b { background: var(--back-c); }
+
+  /* ARCH GRID */
+  .arch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .arch-grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+  .arch-card {
+    border-radius: 14px;
+    border: 2px solid var(--border);
+    overflow: hidden;
+    background: #fff;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  }
+  .arch-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.10);
+  }
+  .arch-card.fc:hover { border-color: var(--front-c); }
+  .arch-card.bc:hover { border-color: var(--back-c); }
+
+  .card-top {
+    padding: 18px 18px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .card-icon { font-size: 2.2rem; flex-shrink: 0; line-height: 1; }
+  .card-title {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .card-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+  .badge-f { background: var(--front-bg); color: var(--front-c); border: 1px solid rgba(230,57,70,0.3); }
+  .badge-b { background: var(--back-bg);  color: var(--back-c);  border: 1px solid rgba(43,108,176,0.3); }
+
+  .card-body { padding: 16px 18px; }
+  .card-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+
+  /* Diagram box */
+  .diagram {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: #a8ff78;
+    line-height: 1.8;
+    margin-bottom: 12px;
+    white-space: pre;
+  }
+  .d-grey  { color: #888; }
+  .d-blue  { color: #79b8ff; }
+  .d-yel   { color: #f0e68c; }
+  .d-pink  { color: #ffb3c6; }
+  .d-green { color: #a8ff78; }
+  .d-ora   { color: #ffa07a; }
+
+  .card-use {
+    font-size: 0.72rem;
+    color: var(--muted);
+    display: flex; align-items: flex-start; gap: 6px;
+  }
+  .card-use strong { color: var(--ink); white-space: nowrap; }
+
+  /* COMPARE TABLE */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 36px;
+    font-size: 0.8rem;
+    background: #fff;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .compare-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .th-dim  { background: var(--border); color: var(--muted); }
+  .th-front { background: var(--front-c); color: #fff; }
+  .th-back  { background: var(--back-c); color: #fff; }
+  .compare-table td { padding: 10px 16px; border-top: 1px solid var(--border); color: var(--muted); line-height: 1.4; }
+  .compare-table tr:hover td { background: #f5f5f0; }
+  .td-dim { color: var(--ink); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header">
+    <h1>Tipos de<br><span class="r">Arquitectura</span><br><span class="b">Front & Back</span></h1>
+    <p>Los patrones arquitectónicos que definen cómo se estructura y organiza el software moderno.</p>
+  </div>
+
+  <!-- FRONTEND ARCHITECTURES -->
+  <div class="sec-label">
+    <div class="sec-pill pill-f">Frontend</div>
+    <div class="sec-line line-f"></div>
+  </div>
+
+  <div class="arch-grid">
+
+    <div class="arch-card fc">
+      <div class="card-top">
+        <div class="card-icon">📄</div>
+        <div>
+          <div class="card-title">SPA — Single Page App</div>
+          <span class="card-badge badge-f">React · Vue · Angular</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Una sola página HTML que actualiza el DOM dinámicamente con JS. No recarga la página completa al navegar.</p>
+        <div class="diagram"><span class="d-grey">Browser</span>
+<span class="d-blue">──▶</span> index.html (vacío)
+<span class="d-blue">──▶</span> bundle.js (<span class="d-yel">toda la app</span>)
+<span class="d-green">◀──</span> Renderiza en cliente</div>
+        <p class="card-use"><strong>Úsalo en:</strong> Apps con mucha interacción, dashboards, herramientas tipo Gmail.</p>
+      </div>
+    </div>
+
+    <div class="arch-card fc">
+      <div class="card-top">
+        <div class="card-icon">🖥️</div>
+        <div>
+          <div class="card-title">SSR — Server Side Rendering</div>
+          <span class="card-badge badge-f">Next.js · Nuxt · Remix</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">El servidor genera el HTML completo en cada petición. Mejor SEO y tiempo de primera carga visible (FCP).</p>
+        <div class="diagram"><span class="d-grey">Request</span> ──▶ <span class="d-blue">Servidor</span>
+<span class="d-blue">Servidor</span> genera <span class="d-yel">HTML completo</span>
+<span class="d-green">◀──</span> HTML listo (<span class="d-pink">hidratado</span>)</div>
+        <p class="card-use"><strong>Úsalo en:</strong> E-commerce, blogs, apps con SEO crítico o usuarios lentos.</p>
+      </div>
+    </div>
+
+    <div class="arch-card fc">
+      <div class="card-top">
+        <div class="card-icon">🧊</div>
+        <div>
+          <div class="card-title">SSG — Static Site Generation</div>
+          <span class="card-badge badge-f">Astro · Next.js · Gatsby</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Las páginas se generan en tiempo de build, no en runtime. Velocidad máxima, sin servidor. Sirve desde CDN.</p>
+        <div class="diagram"><span class="d-grey">Build time:</span>
+  <span class="d-yel">datos</span> ──▶ <span class="d-blue">generador</span>
+  <span class="d-blue">generador</span> ──▶ <span class="d-green">HTML estáticos</span>
+<span class="d-grey">Runtime:</span> CDN sirve archivos</div>
+        <p class="card-use"><strong>Úsalo en:</strong> Portafolios, documentación, landing pages, blogs.</p>
+      </div>
+    </div>
+
+    <div class="arch-card fc">
+      <div class="card-top">
+        <div class="card-icon">🏝️</div>
+        <div>
+          <div class="card-title">Islands Architecture</div>
+          <span class="card-badge badge-f">Astro · Fresh · Qwik</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Página mayormente estática con "islas" interactivas. Hidrata solo los componentes que lo necesitan.</p>
+        <div class="diagram"><span class="d-grey">🟦 HTML estático</span> (0 JS)
+<span class="d-yel">⚡ Isla interactiva</span> (JS mínimo)
+<span class="d-grey">🟦 HTML estático</span> (0 JS)
+<span class="d-yel">⚡ Isla carrito</span> (JS reactivo)</div>
+        <p class="card-use"><strong>Úsalo en:</strong> Sitios de contenido con componentes interactivos puntuales.</p>
+      </div>
+    </div>
+
+    <div class="arch-card fc">
+      <div class="card-top">
+        <div class="card-icon">🧩</div>
+        <div>
+          <div class="card-title">Micro Frontends</div>
+          <span class="card-badge badge-f">Module Federation · single-spa</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Divide el frontend en aplicaciones independientes. Cada equipo despliega su UI de forma autónoma.</p>
+        <div class="diagram"><span class="d-grey">Shell App</span>
+├── <span class="d-blue">Team A:</span> <span class="d-yel">Checkout</span> (React)
+├── <span class="d-pink">Team B:</span> <span class="d-yel">Catálogo</span> (Vue)
+└── <span class="d-green">Team C:</span> <span class="d-yel">Perfil</span> (Angular)</div>
+        <p class="card-use"><strong>Úsalo en:</strong> Grandes organizaciones, portales corporativos con múltiples equipos.</p>
+      </div>
+    </div>
+
+    <div class="arch-card fc">
+      <div class="card-top">
+        <div class="card-icon">📱</div>
+        <div>
+          <div class="card-title">PWA — Progressive Web App</div>
+          <span class="card-badge badge-f">Service Worker · Web APIs</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Web app con capacidades nativas: offline, notificaciones push, instalable en el dispositivo sin app store.</p>
+        <div class="diagram"><span class="d-blue">Service Worker</span> intercepta
+├── Cache <span class="d-green">offline-first</span>
+├── Push <span class="d-yel">notificaciones</span>
+└── <span class="d-pink">Instalable</span> en OS</div>
+        <p class="card-use"><strong>Úsalo en:</strong> Apps con usuarios móviles, áreas con mala conectividad.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BACKEND ARCHITECTURES -->
+  <div class="sec-label">
+    <div class="sec-pill pill-b">Backend</div>
+    <div class="sec-line line-b"></div>
+  </div>
+
+  <div class="arch-grid">
+
+    <div class="arch-card bc">
+      <div class="card-top">
+        <div class="card-icon">🧱</div>
+        <div>
+          <div class="card-title">Monolítica</div>
+          <span class="card-badge badge-b">Django · Rails · Spring MVC</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Toda la aplicación en un único proceso desplegable. Simple al inicio, puede volverse difícil de escalar.</p>
+        <div class="diagram"><span class="d-blue">[ UI + Negocio + Datos ]</span>
+         en un solo proceso
+<span class="d-grey">DB ◀──▶ App ──▶ HTTP</span>
+<span class="d-yel">Deploy único</span> ✓ Simple</div>
+        <p class="card-use"><strong>Úsalo en:</strong> MVPs, equipos pequeños, apps de dominio simple.</p>
+      </div>
+    </div>
+
+    <div class="arch-card bc">
+      <div class="card-top">
+        <div class="card-icon">⚡</div>
+        <div>
+          <div class="card-title">Microservicios</div>
+          <span class="card-badge badge-b">Spring Boot · NestJS · FastAPI</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Servicios pequeños e independientes, cada uno con su propia DB y proceso de despliegue autónomo.</p>
+        <div class="diagram"><span class="d-blue">Auth</span>─┐
+<span class="d-yel">Pedidos</span>─┤ ──▶ <span class="d-pink">API Gateway</span>
+<span class="d-green">Pagos</span>──┘
+Cada uno: DB propia</div>
+        <p class="card-use"><strong>Úsalo en:</strong> Sistemas grandes, alta demanda, múltiples equipos.</p>
+      </div>
+    </div>
+
+    <div class="arch-card bc">
+      <div class="card-top">
+        <div class="card-icon">☁️</div>
+        <div>
+          <div class="card-title">Serverless / FaaS</div>
+          <span class="card-badge badge-b">AWS Lambda · Vercel · Cloudflare</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Funciones que ejecutan bajo demanda. Sin gestión de servidores. Pagas solo lo que usas. Escala automáticamente.</p>
+        <div class="diagram"><span class="d-grey">Event</span> ──▶ <span class="d-blue">Lambda fn()</span>
+<span class="d-blue">fn()</span> ejecuta ──▶ <span class="d-green">response</span>
+<span class="d-grey">Sin servidor activo</span>
+<span class="d-yel">Escala: 0 → ∞</span></div>
+        <p class="card-use"><strong>Úsalo en:</strong> Procesos batch, webhooks, APIs de bajo tráfico.</p>
+      </div>
+    </div>
+
+    <div class="arch-card bc">
+      <div class="card-top">
+        <div class="card-icon">🔄</div>
+        <div>
+          <div class="card-title">Event-Driven</div>
+          <span class="card-badge badge-b">Kafka · RabbitMQ · EventBridge</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Los servicios se comunican a través de eventos asíncronos. Máximo desacoplamiento entre productor y consumidor.</p>
+        <div class="diagram"><span class="d-blue">Productor</span> ──▶ <span class="d-yel">Event Bus</span>
+<span class="d-yel">Bus</span> ──▶ <span class="d-green">Consumidor A</span>
+<span class="d-yel">Bus</span> ──▶ <span class="d-pink">Consumidor B</span>
+<span class="d-grey">Desacoplados: async</span></div>
+        <p class="card-use"><strong>Úsalo en:</strong> Flujos de alta carga, integraciones complejas, auditoría.</p>
+      </div>
+    </div>
+
+    <div class="arch-card bc">
+      <div class="card-top">
+        <div class="card-icon">📋</div>
+        <div>
+          <div class="card-title">Hexagonal / Ports & Adapters</div>
+          <span class="card-badge badge-b">Clean Arch · DDD</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">El dominio de negocio al centro, sin dependencias externas. Adapters intercambiables: DB, UI, APIs.</p>
+        <div class="diagram">     <span class="d-grey">[ HTTP ]</span>  <span class="d-grey">[ DB ]</span>
+        ↕ (Adapters) ↕
+<span class="d-blue">[ Puerto ] [ Dominio ] [ Puerto ]</span>
+     ↕ (Adapters) ↕
+     <span class="d-grey">[ CLI ]</span>  <span class="d-grey">[ Queue ]</span></div>
+        <p class="card-use"><strong>Úsalo en:</strong> Lógica de negocio compleja, alta testabilidad requerida.</p>
+      </div>
+    </div>
+
+    <div class="arch-card bc">
+      <div class="card-top">
+        <div class="card-icon">📊</div>
+        <div>
+          <div class="card-title">CQRS + Event Sourcing</div>
+          <span class="card-badge badge-b">Axon · EventStore · MediatR</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Separa lecturas de escrituras. El estado se reconstruye reproduciendo eventos inmutables almacenados en orden.</p>
+        <div class="diagram"><span class="d-pink">Command</span> ──▶ Write DB
+<span class="d-pink">Evento</span> generado ──▶ <span class="d-yel">Store</span>
+<span class="d-yel">Store</span> ──▶ Read DB (<span class="d-green">optimizada</span>)
+<span class="d-blue">Query</span> ──▶ Read DB</div>
+        <p class="card-use"><strong>Úsalo en:</strong> Auditoría, sistemas financieros, alta carga de lectura.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Compare table -->
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th class="th-dim">Dimensión</th>
+        <th class="th-front">Frontend</th>
+        <th class="th-back">Backend</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="td-dim">Responsabilidad</td>
+        <td>Presentación, UX, estado del cliente</td>
+        <td>Lógica de negocio, datos, seguridad</td>
+      </tr>
+      <tr>
+        <td class="td-dim">Lenguajes</td>
+        <td>JS / TS / Dart / WASM</td>
+        <td>Python, Java, Go, Rust, Ruby, JS/TS</td>
+      </tr>
+      <tr>
+        <td class="td-dim">Entorno</td>
+        <td>Navegador, dispositivo móvil, desktop</td>
+        <td>Servidor, contenedor, función cloud</td>
+      </tr>
+      <tr>
+        <td class="td-dim">Tendencia actual</td>
+        <td>Hidratación parcial, Edge rendering</td>
+        <td>Serverless, Event-driven, WASM</td>
+      </tr>
+      <tr>
+        <td class="td-dim">Escalado</td>
+        <td>CDN, caché, lazy loading</td>
+        <td>Horizontal, réplicas, sharding</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+</body>
+</html>

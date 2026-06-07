@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buenas Prácticas & Conclusión</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --green: #3fb950;
+    --blue: #58a6ff;
+    --purple: #bc8cff;
+    --orange: #f78166;
+    --yellow: #e3b341;
+    --teal: #39d353;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 44px 22px;
+    background-image:
+      linear-gradient(rgba(63,185,80,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(63,185,80,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+
+  /* HEADER */
+  .hero {
+    text-align: center;
+    margin-bottom: 56px;
+    padding: 50px 30px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(63,185,80,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: 14px;
+  }
+  .hero h1 em { color: var(--green); font-style: italic; }
+  .hero p { color: var(--muted); font-size: 1rem; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+
+  /* SECTION */
+  .sec-head {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 18px; margin-top: 44px;
+  }
+  .sec-icon { font-size: 1.4rem; }
+  .sec-head h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+  }
+  .sec-head h2 span { color: var(--green); font-style: italic; }
+  .sec-line { flex:1; height:1px; background: var(--border); }
+
+  /* PRACTICES GRID */
+  .practices { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+
+  .prac {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 18px;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .prac:hover { transform: translateY(-3px); }
+
+  /* color accent by category */
+  .p-green  { border-left: 3px solid var(--green);  }
+  .p-blue   { border-left: 3px solid var(--blue);   }
+  .p-purple { border-left: 3px solid var(--purple); }
+  .p-orange { border-left: 3px solid var(--orange); }
+  .p-yellow { border-left: 3px solid var(--yellow); }
+  .p-teal   { border-left: 3px solid var(--teal);   }
+
+  .p-green:hover  { border-color: var(--green);  }
+  .p-blue:hover   { border-color: var(--blue);   }
+  .p-purple:hover { border-color: var(--purple); }
+  .p-orange:hover { border-color: var(--orange); }
+  .p-yellow:hover { border-color: var(--yellow); }
+  .p-teal:hover   { border-color: var(--teal);   }
+
+  .prac-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-bottom: 10px;
+    display: block;
+    letter-spacing: 1px;
+  }
+  .prac-icon { font-size: 1.8rem; margin-bottom: 10px; display: block; }
+  .prac-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .prac-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+
+  .code-snippet {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 10px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    line-height: 1.7;
+    overflow: hidden;
+  }
+  .c-bad  { color: #f78166; }
+  .c-good { color: #3fb950; }
+  .c-com  { color: #7d8590; }
+  .c-kw   { color: #ff7b72; }
+  .c-fn   { color: #d2a8ff; }
+  .c-str  { color: #a5d6ff; }
+  .c-num  { color: #79c0ff; }
+
+  /* PILLAR badges */
+  .pillar-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    padding: 2px 8px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .pb-green  { background: rgba(63,185,80,0.15);  color: var(--green);  }
+  .pb-blue   { background: rgba(88,166,255,0.15); color: var(--blue);   }
+  .pb-purple { background: rgba(188,140,255,0.15);color: var(--purple); }
+  .pb-orange { background: rgba(247,129,102,0.15);color: var(--orange); }
+  .pb-yellow { background: rgba(227,179,65,0.15); color: var(--yellow); }
+  .pb-teal   { background: rgba(57,211,83,0.15);  color: var(--teal);   }
+
+  /* SOLID section */
+  .solid-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-bottom: 14px; }
+  .solid-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 10px;
+    text-align: center;
+  }
+  .solid-letter {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.2rem;
+    color: var(--green);
+    display: block;
+    margin-bottom: 4px;
+    line-height: 1;
+  }
+  .solid-name { font-size: 0.7rem; font-weight: 700; margin-bottom: 4px; }
+  .solid-desc { font-size: 0.63rem; color: var(--muted); line-height: 1.4; }
+
+  /* CONCLUSION */
+  .conclusion {
+    margin-top: 52px;
+    background: linear-gradient(135deg, var(--surface) 0%, #0d1f0d 100%);
+    border: 1px solid rgba(63,185,80,0.3);
+    border-radius: 20px;
+    padding: 40px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .conclusion::before {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 300px; height: 300px;
+    background: radial-gradient(ellipse, rgba(63,185,80,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .conclusion-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .conclusion-tag::before { content:''; width:20px; height:1px; background:var(--green); }
+  .conclusion h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 24px;
+  }
+  .conclusion h2 em { color: var(--green); font-style: italic; }
+
+  .conclusion-body { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .concl-text p {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 14px;
+  }
+  .concl-text p strong { color: var(--text); }
+  .concl-text p em { color: var(--green); font-style: normal; }
+
+  .concl-checklist { display: flex; flex-direction: column; gap: 10px; }
+  .check-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: rgba(63,185,80,0.06);
+    border: 1px solid rgba(63,185,80,0.15);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+  .check-icon { color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+  .check-item strong { color: var(--text); display: block; margin-bottom: 2px; }
+  .check-item span { color: var(--muted); }
+
+  .signature {
+    text-align: center;
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .signature strong { color: var(--green); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <span class="hero-tag">// best_practices.guide</span>
+    <h1>Buenas Prácticas<br>de <em>Programación</em></h1>
+    <p>Principios, patrones y hábitos que todo desarrollador debe aplicar para escribir código limpio, mantenible y escalable.</p>
+  </div>
+
+  <!-- PRÁCTICAS FUNDAMENTALES -->
+  <div class="sec-head">
+    <span class="sec-icon">📐</span>
+    <h2>Principios <span>Fundamentales</span></h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="practices">
+
+    <div class="prac p-green">
+      <span class="prac-num">// 01 · LEGIBILIDAD</span>
+      <div class="pillar-badge pb-green">CLEAN CODE</div>
+      <span class="prac-icon">📖</span>
+      <div class="prac-name">Código Limpio</div>
+      <p class="prac-desc">El código se lee más veces de las que se escribe. Nombres claros, funciones pequeñas y sin comentarios obvios.</p>
+      <div class="code-snippet">
+<span class="c-com">// ❌ Mal</span>
+<span class="c-kw">function</span> <span class="c-fn">fn</span>(x) { <span class="c-kw">return</span> x * <span class="c-num">0.21</span>; }
+
+<span class="c-com">// ✅ Bien</span>
+<span class="c-kw">function</span> <span class="c-fn">calcularIVA</span>(precio) {
+  <span class="c-kw">const</span> IVA = <span class="c-num">0.21</span>;
+  <span class="c-kw">return</span> precio * IVA;
+}
+      </div>
+    </div>
+
+    <div class="prac p-blue">
+      <span class="prac-num">// 02 · PRINCIPIO</span>
+      <div class="pillar-badge pb-blue">DRY</div>
+      <span class="prac-icon">♻️</span>
+      <div class="prac-name">Don't Repeat Yourself</div>
+      <p class="prac-desc">Cada pieza de conocimiento debe tener una sola representación. Elimina duplicación extrayendo abstracciones.</p>
+      <div class="code-snippet">
+<span class="c-com">// ❌ Duplicado</span>
+logUser(<span class="c-str">"INFO"</span>, <span class="c-str">"Acceso"</span>);
+logAdmin(<span class="c-str">"INFO"</span>, <span class="c-str">"Acceso"</span>);
+
+<span class="c-com">// ✅ Abstraído</span>
+<span class="c-kw">function</span> <span class="c-fn">log</span>(role, msg) { ... }
+<span class="c-fn">log</span>(<span class="c-str">"user"</span>, <span class="c-str">"Acceso"</span>);
+<span class="c-fn">log</span>(<span class="c-str">"admin"</span>, <span class="c-str">"Acceso"</span>);
+      </div>
+    </div>
+
+    <div class="prac p-purple">
+      <span class="prac-num">// 03 · PRINCIPIO</span>
+      <div class="pillar-badge pb-purple">KISS</div>
+      <span class="prac-icon">💎</span>
+      <div class="prac-name">Keep It Simple</div>
+      <p class="prac-desc">La solución más simple que funciona es la mejor. Evita sobreingeniería. Añade complejidad solo cuando sea necesario.</p>
+      <div class="code-snippet">
+<span class="c-com">// ❌ Sobreingeniería</span>
+<span class="c-kw">new</span> <span class="c-fn">AbstractFactoryBuilder</span>()
+  .<span class="c-fn">withStrategy</span>(...).<span class="c-fn">build</span>()
+
+<span class="c-com">// ✅ Simple</span>
+<span class="c-kw">const</span> result = <span class="c-fn">processData</span>(input);
+      </div>
+    </div>
+
+    <div class="prac p-orange">
+      <span class="prac-num">// 04 · PRINCIPIO</span>
+      <div class="pillar-badge pb-orange">YAGNI</div>
+      <span class="prac-icon">🎯</span>
+      <div class="prac-name">You Aren't Gonna Need It</div>
+      <p class="prac-desc">No implementes funcionalidades especulativas. Construye solo lo que se necesita ahora. El futuro cambia.</p>
+      <div class="code-snippet">
+<span class="c-com">// ❌ Especulativo</span>
+<span class="c-kw">function</span> <span class="c-fn">exportToPDF</span>() {}   <span class="c-com">// nadie pidió</span>
+<span class="c-kw">function</span> <span class="c-fn">exportToExcel</span>() {} <span class="c-com">// nadie pidió</span>
+
+<span class="c-com">// ✅ Solo lo necesario</span>
+<span class="c-kw">function</span> <span class="c-fn">exportToCSV</span>() {}   <span class="c-com">// requerimiento real</span>
+      </div>
+    </div>
+
+    <div class="prac p-yellow">
+      <span class="prac-num">// 05 · MANTENIMIENTO</span>
+      <div class="pillar-badge pb-yellow">TESTING</div>
+      <span class="prac-icon">🧪</span>
+      <div class="prac-name">Test-Driven Development</div>
+      <p class="prac-desc">Escribe el test antes que el código. Red → Green → Refactor. Garantiza que el código hace lo que debe hacer.</p>
+      <div class="code-snippet">
+<span class="c-com">// 1. RED: test que falla</span>
+<span class="c-fn">expect</span>(<span class="c-fn">sumar</span>(<span class="c-num">2</span>,<span class="c-num">3</span>)).<span class="c-fn">toBe</span>(<span class="c-num">5</span>); <span class="c-bad">✗</span>
+
+<span class="c-com">// 2. GREEN: implementa mínimo</span>
+<span class="c-kw">function</span> <span class="c-fn">sumar</span>(a, b) { <span class="c-kw">return</span> a+b; }
+<span class="c-fn">expect</span>(<span class="c-fn">sumar</span>(<span class="c-num">2</span>,<span class="c-num">3</span>)).<span class="c-fn">toBe</span>(<span class="c-num">5</span>); <span class="c-good">✓</span>
+      </div>
+    </div>
+
+    <div class="prac p-teal">
+      <span class="prac-num">// 06 · COLABORACIÓN</span>
+      <div class="pillar-badge pb-teal">GIT</div>
+      <span class="prac-icon">🌿</span>
+      <div class="prac-name">Control de Versiones</div>
+      <p class="prac-desc">Commits pequeños y descriptivos. Ramas por feature. Pull Requests con revisión. Nunca commitear directamente a main.</p>
+      <div class="code-snippet">
+<span class="c-com">// ❌ Mal commit</span>
+<span class="c-bad">git commit -m "fixes"</span>
+
+<span class="c-com">// ✅ Buen commit (Conventional)</span>
+<span class="c-good">feat(auth): add JWT refresh token</span>
+<span class="c-good">fix(api): handle null user response</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SOLID -->
+  <div class="sec-head">
+    <span class="sec-icon">🏗️</span>
+    <h2>Principios <span>SOLID</span></h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="solid-grid">
+    <div class="solid-card">
+      <span class="solid-letter">S</span>
+      <div class="solid-name">Single Responsibility</div>
+      <p class="solid-desc">Una clase = una razón para cambiar. Un solo propósito bien definido.</p>
+    </div>
+    <div class="solid-card">
+      <span class="solid-letter">O</span>
+      <div class="solid-name">Open / Closed</div>
+      <p class="solid-desc">Abierto a extensión, cerrado a modificación. Extiende sin romper.</p>
+    </div>
+    <div class="solid-card">
+      <span class="solid-letter">L</span>
+      <div class="solid-name">Liskov Substitution</div>
+      <p class="solid-desc">Las subclases deben poder reemplazar a su clase base sin romper el programa.</p>
+    </div>
+    <div class="solid-card">
+      <span class="solid-letter">I</span>
+      <div class="solid-name">Interface Segregation</div>
+      <p class="solid-desc">Muchas interfaces específicas son mejor que una interfaz general.</p>
+    </div>
+    <div class="solid-card">
+      <span class="solid-letter">D</span>
+      <div class="solid-name">Dependency Inversion</div>
+      <p class="solid-desc">Depende de abstracciones, no de implementaciones concretas.</p>
+    </div>
+  </div>
+
+  <!-- CONCLUSIÓN -->
+  <div class="conclusion">
+    <div class="conclusion-tag">Conclusión del ecosistema</div>
+    <h2>El <em>camino</em> del<br>desarrollador moderno</h2>
+
+    <div class="conclusion-body">
+      <div class="concl-text">
+        <p>
+          A lo largo de esta guía hemos recorrido el ecosistema completo del desarrollo moderno: desde <strong>qué son los microservicios</strong> y cómo se comunican, hasta los <strong>frameworks y lenguajes</strong> que dan vida a las aplicaciones.
+        </p>
+        <p>
+          Los <em>arquetipos de frameworks</em> (React, Vue, Spring Boot, FastAPI…) son las herramientas. Las <em>arquitecturas</em> (SPA, SSR, Serverless, Event-Driven…) son los planos. Los <em>patrones de diseño</em> son las soluciones probadas. Y las <strong>buenas prácticas</strong> son el hilo que todo lo une.
+        </p>
+        <p>
+          Ninguna tecnología es una bala de plata. El conocimiento profundo de los principios te permite <em>elegir la herramienta correcta</em> para cada problema, en lugar de adaptar el problema a la herramienta que conoces.
+        </p>
+        <p style="font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--green); margin-top:8px;">
+          "La arquitectura no es sobre tecnología.<br>Es sobre decisiones de negocio."
+        </p>
+      </div>
+
+      <div class="concl-checklist">
+        <div class="check-item">
+          <span class="check-icon">✓</span>
+          <div><strong>Microservicios</strong><span>Desacopla servicios para escalar de forma independiente y con resiliencia.</span></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">✓</span>
+          <div><strong>Frameworks correctos</strong><span>Elige según el equipo, el problema y el contexto. No solo por popularidad.</span></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">✓</span>
+          <div><strong>Arquitectura adecuada</strong><span>SPA, SSR, Hexagonal, Event-Driven… cada una tiene su lugar.</span></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">✓</span>
+          <div><strong>Patrones de diseño</strong><span>Circuit Breaker, CQRS, Saga… soluciones a problemas conocidos.</span></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">✓</span>
+          <div><strong>API Gateway</strong><span>Un punto de entrada, múltiples servicios. Seguridad y routing centralizado.</span></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">✓</span>
+          <div><strong>DB per Service</strong><span>Autonomía de datos = autonomía de equipos. Elige la DB correcta para cada caso.</span></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">✓</span>
+          <div><strong>Testing sólido</strong><span>Pirámide de tests: muchos unitarios, algunos de integración, pocos E2E.</span></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">✓</span>
+          <div><strong>Buenas prácticas</strong><span>SOLID, DRY, KISS, YAGNI y código limpio son la base de todo buen sistema.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="signature">
+      <strong>// arquitectura · frameworks · patrones · buenas prácticas</strong><br>
+      el ecosistema completo del desarrollo de software moderno
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

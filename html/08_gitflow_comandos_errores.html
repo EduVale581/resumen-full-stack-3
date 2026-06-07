@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitFlow & Git</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Cabinet+Grotesk:wght@400;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:      #0a0c10;
+    --surface: #111318;
+    --surf2:   #1a1d24;
+    --border:  #2a2d36;
+    --text:    #e8eaf0;
+    --muted:   #6b7280;
+    --main:    #f97316;   /* orange — main branch */
+    --dev:     #8b5cf6;   /* purple — develop */
+    --feat:    #06b6d4;   /* cyan — feature */
+    --rel:     #10b981;   /* green — release */
+    --hot:     #ef4444;   /* red — hotfix */
+    --good:    #22c55e;
+    --bad:     #ef4444;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Familjen Grotesk', sans-serif;
+    min-height: 100vh;
+    padding: 44px 22px 60px;
+    background-image:
+      radial-gradient(ellipse 80% 30% at 50% 0%, rgba(139,92,246,0.08) 0%, transparent 60%);
+  }
+  .container { max-width: 980px; margin: 0 auto; }
+
+  /* ═══ HERO ═══ */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 20px;
+    padding-bottom: 28px;
+    margin-bottom: 44px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--main);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .hero-label::before { content:'●'; color: var(--main); animation: blink 1.4s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  h1 {
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 800;
+    line-height: 1.0;
+  }
+  h1 .o { color: var(--main); }
+  h1 .p { color: var(--dev); }
+  .hero-right { text-align: right; }
+  .hero-right p { font-size: 0.85rem; color: var(--muted); max-width: 240px; line-height: 1.6; margin-left: auto; }
+
+  /* ═══ SECTION HEADS ═══ */
+  .sh {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 20px; margin-top: 48px;
+  }
+  .sh-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .sh h2 { font-size: 1.3rem; font-weight: 800; }
+  .sh-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* ═══ GITFLOW VISUAL ═══ */
+  .gitflow-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 32px 28px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Branch lanes */
+  .branch-legend {
+    display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 28px;
+  }
+  .leg { display: flex; align-items: center; gap: 7px; font-size: 0.75rem; font-weight: 700; }
+  .leg-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  /* SVG-like flow using CSS */
+  .flow-diagram {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 0;
+    row-gap: 0;
+  }
+  .branch-row {
+    display: contents;
+  }
+  .branch-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 8px 12px 8px 0;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    border-right: 2px solid var(--border);
+  }
+  .branch-track {
+    padding: 6px 0 6px 16px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+
+  /* nodes and lines */
+  .track-line {
+    height: 2px;
+    flex: 1;
+  }
+  .node {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+    background: var(--bg);
+  }
+  .node-tag {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    white-space: nowrap;
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #fff;
+    font-weight: 600;
+  }
+  .node-tag.bot { top: auto; bottom: -20px; }
+
+  /* branch colors */
+  .c-main { color: var(--main); }
+  .c-dev  { color: var(--dev);  }
+  .c-feat { color: var(--feat); }
+  .c-rel  { color: var(--rel);  }
+  .c-hot  { color: var(--hot);  }
+
+  .bg-main { background: var(--main); border-color: var(--main); }
+  .bg-dev  { background: var(--dev);  border-color: var(--dev);  }
+  .bg-feat { background: var(--feat); border-color: var(--feat); }
+  .bg-rel  { background: var(--rel);  border-color: var(--rel);  }
+  .bg-hot  { background: var(--hot);  border-color: var(--hot);  }
+
+  .line-main { background: var(--main); }
+  .line-dev  { background: var(--dev);  }
+  .line-feat { background: var(--feat); }
+  .line-rel  { background: var(--rel);  }
+  .line-hot  { background: var(--hot);  }
+
+  /* ═══ BRANCH DESCRIPTIONS ═══ */
+  .branches-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .branch-card {
+    border-radius: 12px;
+    padding: 16px 12px;
+    background: var(--surf2);
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .bc-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    margin: 0 auto 8px;
+  }
+  .bc-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .bc-desc { font-size: 0.68rem; color: var(--muted); line-height: 1.5; }
+
+  /* ═══ GITFLOW STEPS ═══ */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .step-card {
+    background: var(--surf2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 14px;
+  }
+  .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .step-title { font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; }
+  .step-code {
+    background: var(--bg);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: #a5f3fc;
+    line-height: 1.8;
+  }
+  .kw  { color: #f472b6; }
+  .br  { color: #86efac; }
+  .cm  { color: var(--muted); }
+  .tg  { color: #fbbf24; }
+  .op  { color: var(--dev); }
+
+  /* ═══ COMANDOS ═══ */
+  .cmd-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .cmd-group {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .cmd-group-header {
+    padding: 12px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .cmd-list { padding: 4px 0 8px; }
+  .cmd-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .cmd-item:last-child { border-bottom: none; }
+  .cmd-code {
+    padding: 9px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.67rem;
+    color: #67e8f9;
+    background: rgba(6,182,212,0.06);
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .cmd-code .git-kw { color: #f97316; font-weight: 700; }
+  .cmd-code .flag { color: #a78bfa; }
+  .cmd-explain {
+    padding: 9px 14px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+  }
+
+  /* ═══ ERRORES ═══ */
+  .errors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .error-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .err-header {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(239,68,68,0.08);
+    border-bottom: 1px solid var(--border);
+  }
+  .err-icon { font-size: 1.3rem; }
+  .err-title { font-size: 0.88rem; font-weight: 800; color: #fca5a5; }
+  .err-body { padding: 14px 16px; }
+  .err-msg {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.63rem;
+    color: var(--bad);
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+  .err-cause { font-size: 0.74rem; color: var(--muted); margin-bottom: 8px; line-height: 1.5; }
+  .err-fix {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.63rem;
+    color: var(--good);
+    background: rgba(34,197,94,0.07);
+    border: 1px solid rgba(34,197,94,0.2);
+    border-radius: 6px;
+    padding: 8px 10px;
+    line-height: 1.7;
+  }
+  .fix-label {
+    font-family: 'Familjen Grotesk', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--good);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  /* ═══ TIPS ═══ */
+  .tips {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .tip {
+    background: var(--surf2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--dev);
+    border-radius: 10px;
+    padding: 14px 14px;
+  }
+  .tip h4 { font-size: 0.8rem; font-weight: 800; margin-bottom: 6px; color: var(--text); }
+  .tip p  { font-size: 0.72rem; color: var(--muted); line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <div class="hero-label">version control · workflow</div>
+      <h1><span class="o">Git</span><span class="p">Flow</span> &<br>Git Esencial</h1>
+    </div>
+    <div class="hero-right">
+      <p>Estrategia de ramas, comandos fundamentales y los errores más comunes en equipos de desarrollo moderno.</p>
+    </div>
+  </div>
+
+  <!-- ═══ GITFLOW ═══ -->
+  <div class="sh">
+    <div class="sh-badge" style="background:rgba(139,92,246,0.15);color:var(--dev);">GitFlow</div>
+    <h2>Modelo de Ramas</h2>
+    <div class="sh-line"></div>
+  </div>
+
+  <div class="gitflow-wrap">
+    <div class="branch-legend">
+      <div class="leg"><div class="leg-dot" style="background:var(--main)"></div><span style="color:var(--main)">main</span></div>
+      <div class="leg"><div class="leg-dot" style="background:var(--dev)"></div><span style="color:var(--dev)">develop</span></div>
+      <div class="leg"><div class="leg-dot" style="background:var(--feat)"></div><span style="color:var(--feat)">feature/*</span></div>
+      <div class="leg"><div class="leg-dot" style="background:var(--rel)"></div><span style="color:var(--rel)">release/*</span></div>
+      <div class="leg"><div class="leg-dot" style="background:var(--hot)"></div><span style="color:var(--hot)">hotfix/*</span></div>
+    </div>
+
+    <!-- Flow visual -->
+    <div style="overflow-x:auto">
+      <div style="min-width:680px">
+        <!-- Branch labels + track rows -->
+        <div style="display:grid; grid-template-columns:100px 1fr; gap:0;">
+
+          <!-- main -->
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;font-weight:700;color:var(--main);padding:14px 12px 14px 0;display:flex;align-items:center;border-right:2px solid var(--border);">main</div>
+          <div style="padding:14px 0 14px 16px;display:flex;align-items:center;gap:0;">
+            <div class="node bg-main" style="border-color:var(--main)"><div class="node-tag" style="background:var(--main)">v1.0</div></div>
+            <div class="track-line line-main" style="flex:3"></div>
+            <div class="node" style="border-color:var(--main);background:var(--bg)"></div>
+            <div class="track-line line-main" style="flex:5"></div>
+            <div class="node bg-main" style="border-color:var(--main)"><div class="node-tag" style="background:var(--main)">v1.1</div></div>
+            <div class="track-line line-main" style="flex:4"></div>
+            <div class="node bg-main" style="border-color:var(--main)"><div class="node-tag" style="background:var(--hot)">hotfix</div></div>
+            <div class="track-line line-main" style="flex:2"></div>
+            <div class="node bg-main" style="border-color:var(--main)"><div class="node-tag" style="background:var(--main)">v1.2</div></div>
+          </div>
+
+          <!-- develop -->
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;font-weight:700;color:var(--dev);padding:14px 12px 14px 0;display:flex;align-items:center;border-right:2px solid var(--border);">develop</div>
+          <div style="padding:14px 0 14px 16px;display:flex;align-items:center;gap:0;">
+            <div class="node" style="border-color:var(--dev);background:var(--bg)"></div>
+            <div class="track-line line-dev" style="flex:2"></div>
+            <div class="node" style="border-color:var(--dev);background:var(--bg)"></div>
+            <div class="track-line line-dev" style="flex:2"></div>
+            <div class="node" style="border-color:var(--dev);background:var(--bg)"></div>
+            <div class="track-line line-dev" style="flex:2"></div>
+            <div class="node" style="border-color:var(--dev);background:var(--bg)"></div>
+            <div class="track-line line-dev" style="flex:2"></div>
+            <div class="node bg-dev" style="border-color:var(--dev)"><div class="node-tag bot" style="background:var(--rel)">release</div></div>
+            <div class="track-line line-dev" style="flex:2"></div>
+            <div class="node" style="border-color:var(--dev);background:var(--bg)"></div>
+            <div class="track-line line-dev" style="flex:2"></div>
+            <div class="node" style="border-color:var(--dev);background:var(--bg)"></div>
+          </div>
+
+          <!-- feature/A -->
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;font-weight:700;color:var(--feat);padding:10px 12px 10px 0;display:flex;align-items:center;border-right:2px solid var(--border);">feature/A</div>
+          <div style="padding:10px 0 10px 16px;display:flex;align-items:center;gap:0;">
+            <div style="flex:1;height:2px;background:transparent"></div>
+            <div class="node bg-feat" style="border-color:var(--feat)"></div>
+            <div class="track-line line-feat" style="flex:2"></div>
+            <div class="node bg-feat" style="border-color:var(--feat)"></div>
+            <div style="flex:9;height:2px;background:transparent"></div>
+          </div>
+
+          <!-- feature/B -->
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;font-weight:700;color:var(--feat);padding:10px 12px 10px 0;display:flex;align-items:center;border-right:2px solid var(--border);">feature/B</div>
+          <div style="padding:10px 0 10px 16px;display:flex;align-items:center;gap:0;">
+            <div style="flex:3;height:2px;background:transparent"></div>
+            <div class="node bg-feat" style="border-color:var(--feat)"></div>
+            <div class="track-line line-feat" style="flex:3"></div>
+            <div class="node bg-feat" style="border-color:var(--feat)"></div>
+            <div style="flex:5;height:2px;background:transparent"></div>
+          </div>
+
+          <!-- release -->
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;font-weight:700;color:var(--rel);padding:10px 12px 10px 0;display:flex;align-items:center;border-right:2px solid var(--border);">release/1.1</div>
+          <div style="padding:10px 0 10px 16px;display:flex;align-items:center;gap:0;">
+            <div style="flex:8;height:2px;background:transparent"></div>
+            <div class="node bg-rel" style="border-color:var(--rel)"></div>
+            <div class="track-line line-rel" style="flex:2"></div>
+            <div class="node bg-rel" style="border-color:var(--rel)"></div>
+            <div style="flex:2;height:2px;background:transparent"></div>
+          </div>
+
+          <!-- hotfix -->
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;font-weight:700;color:var(--hot);padding:10px 12px 10px 0;display:flex;align-items:center;border-right:2px solid var(--border);">hotfix/bug</div>
+          <div style="padding:10px 0 10px 16px;display:flex;align-items:center;gap:0;">
+            <div style="flex:12;height:2px;background:transparent"></div>
+            <div class="node bg-hot" style="border-color:var(--hot)"></div>
+            <div class="track-line line-hot" style="flex:2"></div>
+            <div class="node bg-hot" style="border-color:var(--hot)"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Branch descriptions -->
+    <div class="branches-grid" style="margin-top:28px">
+      <div class="branch-card">
+        <div class="bc-dot" style="background:var(--main)"></div>
+        <div class="bc-name" style="color:var(--main)">main</div>
+        <p class="bc-desc">Código en producción. Solo recibe merges de release y hotfix. Siempre estable.</p>
+      </div>
+      <div class="branch-card">
+        <div class="bc-dot" style="background:var(--dev)"></div>
+        <div class="bc-name" style="color:var(--dev)">develop</div>
+        <p class="bc-desc">Integración continua. Base para features. Próxima versión en construcción.</p>
+      </div>
+      <div class="branch-card">
+        <div class="bc-dot" style="background:var(--feat)"></div>
+        <div class="bc-name" style="color:var(--feat)">feature/*</div>
+        <p class="bc-desc">Una rama por funcionalidad. Sale de develop, vuelve a develop via PR.</p>
+      </div>
+      <div class="branch-card">
+        <div class="bc-dot" style="background:var(--rel)"></div>
+        <div class="bc-name" style="color:var(--rel)">release/*</div>
+        <p class="bc-desc">Preparación de versión: bugfixes y docs. Merge a main y develop al cerrar.</p>
+      </div>
+      <div class="branch-card">
+        <div class="bc-dot" style="background:var(--hot)"></div>
+        <div class="bc-name" style="color:var(--hot)">hotfix/*</div>
+        <p class="bc-desc">Corrección urgente en producción. Sale de main, merge a main y develop.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FLUJO PASO A PASO ═══ -->
+  <div class="sh">
+    <div class="sh-badge" style="background:rgba(6,182,212,0.12);color:var(--feat);">Flujo</div>
+    <h2>GitFlow Paso a Paso</h2>
+    <div class="sh-line"></div>
+  </div>
+
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">// PASO 01</div>
+      <div class="step-title" style="color:var(--dev)">Iniciar proyecto</div>
+      <div class="step-code">
+<span class="kw">git</span> init<br>
+<span class="kw">git</span> flow init<br>
+<span class="cm"># develop se crea automático</span><br>
+<span class="kw">git</span> checkout <span class="br">-b</span> develop
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">// PASO 02</div>
+      <div class="step-title" style="color:var(--feat)">Nueva feature</div>
+      <div class="step-code">
+<span class="kw">git</span> flow feature start <span class="tg">login</span><br>
+<span class="cm"># → crea feature/login</span><br>
+<span class="cm"># ... desarrollas ...</span><br>
+<span class="kw">git</span> flow feature finish <span class="tg">login</span>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">// PASO 03</div>
+      <div class="step-title" style="color:var(--rel)">Release</div>
+      <div class="step-code">
+<span class="kw">git</span> flow release start <span class="tg">1.1.0</span><br>
+<span class="cm"># bugfixes, docs, versión</span><br>
+<span class="kw">git</span> flow release finish <span class="tg">1.1.0</span><br>
+<span class="cm"># → merge a main + develop</span>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">// PASO 04</div>
+      <div class="step-title" style="color:var(--hot)">Hotfix urgente</div>
+      <div class="step-code">
+<span class="kw">git</span> flow hotfix start <span class="tg">fix-auth</span><br>
+<span class="cm"># corriges el bug crítico</span><br>
+<span class="kw">git</span> flow hotfix finish <span class="tg">fix-auth</span><br>
+<span class="cm"># → merge a main + develop</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ COMANDOS BÁSICOS ═══ -->
+  <div class="sh">
+    <div class="sh-badge" style="background:rgba(249,115,22,0.12);color:var(--main);">Git CLI</div>
+    <h2>Comandos Esenciales</h2>
+    <div class="sh-line"></div>
+  </div>
+
+  <div class="cmd-sections">
+
+    <div class="cmd-group">
+      <div class="cmd-group-header" style="background:rgba(249,115,22,0.08);color:var(--main);">
+        📁 Repositorio & Config
+      </div>
+      <div class="cmd-list">
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> init</div>
+          <div class="cmd-explain">Inicializar repo en carpeta actual</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> clone &lt;url&gt;</div>
+          <div class="cmd-explain">Clonar repositorio remoto</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> config <span class="flag">--global</span> user.name</div>
+          <div class="cmd-explain">Configurar nombre de usuario global</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> remote <span class="flag">-v</span></div>
+          <div class="cmd-explain">Ver repositorios remotos vinculados</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> status</div>
+          <div class="cmd-explain">Ver estado de archivos modificados</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> log <span class="flag">--oneline</span></div>
+          <div class="cmd-explain">Historial de commits resumido</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-group">
+      <div class="cmd-group-header" style="background:rgba(139,92,246,0.08);color:var(--dev);">
+        💾 Stage & Commit
+      </div>
+      <div class="cmd-list">
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> add .</div>
+          <div class="cmd-explain">Agregar todos los cambios al stage</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> add &lt;file&gt;</div>
+          <div class="cmd-explain">Agregar archivo específico al stage</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> commit <span class="flag">-m</span> "msg"</div>
+          <div class="cmd-explain">Confirmar cambios con mensaje</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> commit <span class="flag">--amend</span></div>
+          <div class="cmd-explain">Modificar el último commit</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> diff</div>
+          <div class="cmd-explain">Ver cambios no staged</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> stash</div>
+          <div class="cmd-explain">Guardar cambios temporalmente</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-group">
+      <div class="cmd-group-header" style="background:rgba(6,182,212,0.08);color:var(--feat);">
+        🌿 Ramas (Branches)
+      </div>
+      <div class="cmd-list">
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> branch</div>
+          <div class="cmd-explain">Listar ramas locales</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> branch <span class="flag">-b</span> &lt;name&gt;</div>
+          <div class="cmd-explain">Crear nueva rama</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> checkout &lt;branch&gt;</div>
+          <div class="cmd-explain">Cambiar a otra rama</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> switch <span class="flag">-c</span> &lt;name&gt;</div>
+          <div class="cmd-explain">Crear y cambiar a nueva rama (moderno)</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> branch <span class="flag">-d</span> &lt;name&gt;</div>
+          <div class="cmd-explain">Eliminar rama local</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> branch <span class="flag">-a</span></div>
+          <div class="cmd-explain">Listar ramas locales y remotas</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd-group">
+      <div class="cmd-group-header" style="background:rgba(16,185,129,0.08);color:var(--rel);">
+        🔀 Merge, Rebase & Remote
+      </div>
+      <div class="cmd-list">
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> merge &lt;branch&gt;</div>
+          <div class="cmd-explain">Fusionar rama en la actual</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> rebase &lt;branch&gt;</div>
+          <div class="cmd-explain">Reorganizar commits sobre otra rama</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> pull origin &lt;branch&gt;</div>
+          <div class="cmd-explain">Traer y fusionar cambios remotos</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> push origin &lt;branch&gt;</div>
+          <div class="cmd-explain">Subir rama al repositorio remoto</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> fetch <span class="flag">--all</span></div>
+          <div class="cmd-explain">Descargar cambios sin fusionar</div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-code"><span class="git-kw">git</span> cherry-pick &lt;hash&gt;</div>
+          <div class="cmd-explain">Aplicar commit específico a rama actual</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ ERRORES COMUNES ═══ -->
+  <div class="sh">
+    <div class="sh-badge" style="background:rgba(239,68,68,0.12);color:var(--bad);">Errores</div>
+    <h2>Errores Comunes de Hoy</h2>
+    <div class="sh-line"></div>
+  </div>
+
+  <div class="errors-grid">
+
+    <div class="error-card">
+      <div class="err-header">
+        <span class="err-icon">🔥</span>
+        <span class="err-title">Merge conflict sin resolver</span>
+      </div>
+      <div class="err-body">
+        <div class="err-msg">CONFLICT (content): Merge conflict in src/auth.js<br>Automatic merge failed; fix conflicts<br>and then commit the result.</div>
+        <p class="err-cause">Dos ramas modificaron la misma línea. Ocurre al hacer merge o pull sin sincronizar develop primero.</p>
+        <div class="err-fix">
+          <span class="fix-label">✓ Solución</span>
+          git fetch origin<br>
+          git rebase origin/develop<br>
+          <span style="color:var(--muted)"># Resolver conflictos en editor</span><br>
+          git add . &amp;&amp; git rebase --continue
+        </div>
+      </div>
+    </div>
+
+    <div class="error-card">
+      <div class="err-header">
+        <span class="err-icon">💀</span>
+        <span class="err-title">Push forzado en rama compartida</span>
+      </div>
+      <div class="err-body">
+        <div class="err-msg">! [rejected] main → main (non-fast-forward)<br>hint: Updates were rejected because the tip<br>of your current branch is behind its remote.</div>
+        <p class="err-cause">Se usó <code style="color:#fca5a5">git push --force</code> en main o develop, sobreescribiendo el historial de otros desarrolladores.</p>
+        <div class="err-fix">
+          <span class="fix-label">✓ Solución segura</span>
+          <span style="color:var(--muted)"># Nunca --force en ramas compartidas</span><br>
+          git push <span style="color:#a78bfa">--force-with-lease</span><br>
+          <span style="color:var(--muted)"># Solo si NADIE más hizo push</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="error-card">
+      <div class="err-header">
+        <span class="err-icon">🗝️</span>
+        <span class="err-title">Credenciales / secretos en commits</span>
+      </div>
+      <div class="err-body">
+        <div class="err-msg">+ API_KEY=sk-prod-abc123xyz<br>+ DB_PASSWORD=supersecret2024<br>+ AWS_SECRET=AKIAIOSFODNN7EXAMPLE</div>
+        <p class="err-cause">Se commitean archivos .env o configs con secretos reales. Una vez en el historial, son públicos aunque se borren.</p>
+        <div class="err-fix">
+          <span class="fix-label">✓ Prevención</span>
+          <span style="color:var(--muted)"># .gitignore</span><br>
+          .env<br>.env.local<br>*.key<br>
+          git secret / vault para secretos
+        </div>
+      </div>
+    </div>
+
+    <div class="error-card">
+      <div class="err-header">
+        <span class="err-icon">⏪</span>
+        <span class="err-title">Deshacer commit ya pusheado</span>
+      </div>
+      <div class="err-body">
+        <div class="err-msg">fatal: You are in 'detached HEAD' state.<br><span style="color:var(--muted)">O peor: reset --hard borra trabajo del equipo</span></div>
+        <p class="err-cause">Usar <code style="color:#fca5a5">git reset --hard</code> en commits ya subidos al remoto destruye historial compartido.</p>
+        <div class="err-fix">
+          <span class="fix-label">✓ Usa revert en lugar de reset</span>
+          <span style="color:var(--muted)"># Crea commit inverso (seguro)</span><br>
+          git revert &lt;commit-hash&gt;<br>
+          git push origin main
+        </div>
+      </div>
+    </div>
+
+    <div class="error-card">
+      <div class="err-header">
+        <span class="err-icon">🐘</span>
+        <span class="err-title">Archivos grandes en el repo</span>
+      </div>
+      <div class="err-body">
+        <div class="err-msg">remote: error: File videos/demo.mp4 is<br>106.50 MB; exceeds GitHub's file size<br>limit of 100.00 MB</div>
+        <p class="err-cause">Binarios, videos, modelos ML o node_modules commiteados por accidente. Git no maneja bien archivos grandes.</p>
+        <div class="err-fix">
+          <span class="fix-label">✓ Solución</span>
+          <span style="color:var(--muted)"># Usar Git LFS para binarios</span><br>
+          git lfs track "*.mp4"<br>
+          <span style="color:var(--muted)"># .gitignore para node_modules</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="error-card">
+      <div class="err-header">
+        <span class="err-icon">🌀</span>
+        <span class="err-title">Rama desincronizada (diverged)</span>
+      </div>
+      <div class="err-body">
+        <div class="err-msg">Your branch and 'origin/feature/login'<br>have diverged, and have 3 and 5 different<br>commits each, respectively.</div>
+        <p class="err-cause">La rama local y la remota avanzaron por separado. Ocurre al trabajar en la misma rama desde dos máquinas.</p>
+        <div class="err-fix">
+          <span class="fix-label">✓ Solución</span>
+          <span style="color:var(--muted)"># Rebase interactivo para limpiar</span><br>
+          git fetch origin<br>
+          git rebase origin/feature/login<br>
+          git push --force-with-lease
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TIPS FINALES -->
+  <div class="sh" style="margin-top:44px">
+    <div class="sh-badge" style="background:rgba(139,92,246,0.12);color:var(--dev);">Pro Tips</div>
+    <h2>Hábitos Esenciales</h2>
+    <div class="sh-line"></div>
+  </div>
+
+  <div class="tips">
+    <div class="tip">
+      <h4>📝 Conventional Commits</h4>
+      <p>Usa el estándar: <code style="color:var(--feat)">feat:</code>, <code style="color:var(--bad)">fix:</code>, <code style="color:var(--muted)">chore:</code>, <code style="color:var(--rel)">docs:</code>. Permite changelogs automáticos y semver.</p>
+    </div>
+    <div class="tip">
+      <h4>🔍 Pull Request chico</h4>
+      <p>PRs de menos de 400 líneas son revisados 2x más rápido. Un PR = una funcionalidad. Divide features grandes.</p>
+    </div>
+    <div class="tip">
+      <h4>🛡️ Branch protection rules</h4>
+      <p>Protege main y develop: requiere PR, mínimo 1 review y CI verde antes de hacer merge. Nunca commit directo.</p>
+    </div>
+    <div class="tip">
+      <h4>🔄 Sincroniza seguido</h4>
+      <p>Haz <code style="color:var(--feat)">git pull --rebase</code> de develop al menos una vez al día en features largas para evitar conflictos masivos.</p>
+    </div>
+    <div class="tip">
+      <h4>🏷️ Tags semánticos</h4>
+      <p>Etiqueta cada release con semver: <code style="color:var(--tg)">v1.2.0</code>. Permite rollbacks precisos y trazabilidad en producción.</p>
+    </div>
+    <div class="tip">
+      <h4>🤖 Git Hooks</h4>
+      <p>Usa <code style="color:var(--feat)">pre-commit</code> para lint y tests rápidos, y <code style="color:var(--feat)">commit-msg</code> para validar conventional commits automáticamente.</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

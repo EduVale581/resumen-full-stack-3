@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arquetipos — Frameworks</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Manrope:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --front: #f97316;
+    --back: #6366f1;
+    --bg: #0c0c0f;
+    --surface: #16161d;
+    --border: #2a2a3a;
+    --text: #f0f0ff;
+    --muted: #6b6b8a;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    min-height: 100vh;
+    padding: 44px 22px;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 15% 5%, rgba(249,115,22,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 85% 95%, rgba(99,102,241,0.12) 0%, transparent 60%);
+  }
+  .container { max-width: 940px; margin: 0 auto; }
+
+  /* ---- HEADER ---- */
+  .header { margin-bottom: 48px; }
+  .eyebrow {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 18px;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-f { background: var(--front); }
+  .dot-b { background: var(--back); }
+  .eyebrow span { font-size: 0.72rem; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+  h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 14px;
+  }
+  h1 .f { color: var(--front); }
+  h1 .b { color: var(--back); }
+  .subtitle { color: var(--muted); font-size: 0.95rem; max-width: 600px; line-height: 1.7; }
+
+  /* ---- SECTIONS ---- */
+  .section-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    margin-top: 36px;
+  }
+  .sh-front { background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.3); }
+  .sh-back  { background: rgba(99,102,241,0.12);  border: 1px solid rgba(99,102,241,0.3); }
+  .section-header h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .sh-front h2 { color: var(--front); }
+  .sh-back  h2 { color: var(--back); }
+  .section-header p { font-size: 0.78rem; color: var(--muted); margin-left: auto; }
+
+  /* ---- GRID ---- */
+  .fw-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+  .fw-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 16px 18px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+    cursor: default;
+  }
+  .fw-card:hover { transform: translateY(-3px); }
+  .fw-card.front-card:hover { border-color: var(--front); }
+  .fw-card.back-card:hover  { border-color: var(--back); }
+
+  /* top accent bar */
+  .fw-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    border-radius: 16px 16px 0 0;
+  }
+  .front-card::before { background: linear-gradient(90deg, var(--front), #fbbf24); }
+  .back-card::before  { background: linear-gradient(90deg, var(--back), #a78bfa); }
+
+  .fw-logo { font-size: 2.4rem; margin-bottom: 10px; display: block; }
+
+  .fw-name {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .lang-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+  .front-card .lang-badge { background: rgba(249,115,22,0.15); color: #fb923c; border: 1px solid rgba(249,115,22,0.3); }
+  .back-card  .lang-badge { background: rgba(99,102,241,0.15);  color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+
+  .fw-desc { font-size: 0.76rem; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+
+  .fw-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .fw-tag {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: 0.62rem;
+    color: var(--muted);
+  }
+
+  /* ---- BOTTOM ROW ---- */
+  .bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 36px; }
+  .info-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 20px;
+  }
+  .info-box h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.82rem;
+    margin-bottom: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .lang-list { display: flex; flex-direction: column; gap: 8px; }
+  .lang-item { display: flex; align-items: center; gap: 10px; font-size: 0.8rem; }
+  .lang-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .lang-name { font-weight: 700; min-width: 90px; }
+  .lang-use { color: var(--muted); font-size: 0.75rem; }
+
+  .tip-box {
+    background: linear-gradient(135deg, rgba(249,115,22,0.08), rgba(99,102,241,0.08));
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .tip-icon { font-size: 2.2rem; flex-shrink: 0; }
+  .tip-box h3 { font-family:'Unbounded',sans-serif; font-size:0.82rem; margin-bottom:8px; }
+  .tip-box p { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="eyebrow">
+      <div class="dot dot-f"></div>
+      <span>Frontend</span>
+      <div class="dot dot-b"></div>
+      <span>Backend</span>
+    </div>
+    <h1>Arquetipos:<br><span class="f">Frameworks</span> &<br><span class="b">Tecnologías</span></h1>
+    <p class="subtitle">Los frameworks más utilizados en el ecosistema de desarrollo moderno, organizados por su capa de aplicación y el lenguaje base que los sustenta.</p>
+  </div>
+
+  <!-- FRONTEND -->
+  <div class="section-header sh-front">
+    <h2>🖥️ FRONTEND — Interfaz de Usuario</h2>
+    <p>Ejecutan en el navegador · Renderizan UI · Gestionan estado</p>
+  </div>
+
+  <div class="fw-grid">
+    <div class="fw-card front-card">
+      <span class="fw-logo">⚛️</span>
+      <div class="fw-name">React</div>
+      <div class="lang-badge">JavaScript / TypeScript</div>
+      <p class="fw-desc">Biblioteca de UI basada en componentes y Virtual DOM. El más popular del mercado, creado por Meta.</p>
+      <div class="fw-tags"><span class="fw-tag">JSX</span><span class="fw-tag">Hooks</span><span class="fw-tag">SPA</span><span class="fw-tag">SSR</span></div>
+    </div>
+
+    <div class="fw-card front-card">
+      <span class="fw-logo">💚</span>
+      <div class="fw-name">Vue.js</div>
+      <div class="lang-badge">JavaScript / TypeScript</div>
+      <p class="fw-desc">Framework progresivo con curva de aprendizaje suave. Combina lo mejor de React y Angular.</p>
+      <div class="fw-tags"><span class="fw-tag">Options API</span><span class="fw-tag">Composition</span><span class="fw-tag">Nuxt</span></div>
+    </div>
+
+    <div class="fw-card front-card">
+      <span class="fw-logo">🔴</span>
+      <div class="fw-name">Angular</div>
+      <div class="lang-badge">TypeScript</div>
+      <p class="fw-desc">Framework completo de Google. Incluye todo de fábrica: routing, forms, HTTP, inyección de dependencias.</p>
+      <div class="fw-tags"><span class="fw-tag">RxJS</span><span class="fw-tag">DI</span><span class="fw-tag">Decorators</span></div>
+    </div>
+
+    <div class="fw-card front-card">
+      <span class="fw-logo">🧡</span>
+      <div class="fw-name">Svelte</div>
+      <div class="lang-badge">JavaScript / TypeScript</div>
+      <p class="fw-desc">Compila a JS vanilla sin runtime. Sin Virtual DOM. El más rápido en rendimiento puro del navegador.</p>
+      <div class="fw-tags"><span class="fw-tag">Compilado</span><span class="fw-tag">SvelteKit</span><span class="fw-tag">Reactivo</span></div>
+    </div>
+
+    <div class="fw-card front-card">
+      <span class="fw-logo">▲</span>
+      <div class="fw-name">Next.js</div>
+      <div class="lang-badge">JavaScript / TypeScript</div>
+      <p class="fw-desc">Meta-framework sobre React. SSR, SSG, ISR y App Router. El estándar para producción con React.</p>
+      <div class="fw-tags"><span class="fw-tag">SSR</span><span class="fw-tag">SSG</span><span class="fw-tag">API Routes</span></div>
+    </div>
+
+    <div class="fw-card front-card">
+      <span class="fw-logo">📱</span>
+      <div class="fw-name">React Native</div>
+      <div class="lang-badge">JavaScript / TypeScript</div>
+      <p class="fw-desc">Desarrollo móvil nativo para iOS y Android usando componentes React. Un código, dos plataformas.</p>
+      <div class="fw-tags"><span class="fw-tag">iOS</span><span class="fw-tag">Android</span><span class="fw-tag">Expo</span></div>
+    </div>
+
+    <div class="fw-card front-card">
+      <span class="fw-logo">🐦</span>
+      <div class="fw-name">Flutter</div>
+      <div class="lang-badge">Dart</div>
+      <p class="fw-desc">SDK de Google para apps multiplataforma: móvil, web y desktop desde un único codebase con Dart.</p>
+      <div class="fw-tags"><span class="fw-tag">Widgets</span><span class="fw-tag">Cross-platform</span><span class="fw-tag">Dart</span></div>
+    </div>
+
+    <div class="fw-card front-card">
+      <span class="fw-logo">🟦</span>
+      <div class="fw-name">Astro</div>
+      <div class="lang-badge">JavaScript / TypeScript</div>
+      <p class="fw-desc">Framework orientado a contenido. Envía 0 JS por defecto. Usa islands architecture para hidratación selectiva.</p>
+      <div class="fw-tags"><span class="fw-tag">MPA</span><span class="fw-tag">Islands</span><span class="fw-tag">SSG</span></div>
+    </div>
+  </div>
+
+  <!-- BACKEND -->
+  <div class="section-header sh-back">
+    <h2>⚙️ BACKEND — Lógica de Servidor</h2>
+    <p>Ejecutan en servidor · Gestionan datos · Exponen APIs</p>
+  </div>
+
+  <div class="fw-grid">
+    <div class="fw-card back-card">
+      <span class="fw-logo">🟩</span>
+      <div class="fw-name">Node.js + Express</div>
+      <div class="lang-badge">JavaScript / TypeScript</div>
+      <p class="fw-desc">Runtime JS en servidor. Express es su framework web minimalista. Ideal para APIs REST rápidas y microservicios.</p>
+      <div class="fw-tags"><span class="fw-tag">REST</span><span class="fw-tag">NPM</span><span class="fw-tag">Event Loop</span></div>
+    </div>
+
+    <div class="fw-card back-card">
+      <span class="fw-logo">🍃</span>
+      <div class="fw-name">Spring Boot</div>
+      <div class="lang-badge">Java / Kotlin</div>
+      <p class="fw-desc">El framework Java más usado en enterprise. Ecosistema completo: seguridad, datos, cloud, mensajería.</p>
+      <div class="fw-tags"><span class="fw-tag">JPA</span><span class="fw-tag">Security</span><span class="fw-tag">Cloud</span></div>
+    </div>
+
+    <div class="fw-card back-card">
+      <span class="fw-logo">🐍</span>
+      <div class="fw-name">Django</div>
+      <div class="lang-badge">Python</div>
+      <p class="fw-desc">Framework "batteries included" para Python. ORM potente, admin auto-generado, autenticación integrada.</p>
+      <div class="fw-tags"><span class="fw-tag">ORM</span><span class="fw-tag">Admin</span><span class="fw-tag">MVT</span></div>
+    </div>
+
+    <div class="fw-card back-card">
+      <span class="fw-logo">⚡</span>
+      <div class="fw-name">FastAPI</div>
+      <div class="lang-badge">Python</div>
+      <p class="fw-desc">API framework moderno y rápido con tipado estático. Genera documentación OpenAPI automáticamente.</p>
+      <div class="fw-tags"><span class="fw-tag">Async</span><span class="fw-tag">OpenAPI</span><span class="fw-tag">Pydantic</span></div>
+    </div>
+
+    <div class="fw-card back-card">
+      <span class="fw-logo">💎</span>
+      <div class="fw-name">Ruby on Rails</div>
+      <div class="lang-badge">Ruby</div>
+      <p class="fw-desc">Convention over configuration. Productividad extrema para MVPs. ORM ActiveRecord, scaffolding automático.</p>
+      <div class="fw-tags"><span class="fw-tag">MVC</span><span class="fw-tag">ActiveRecord</span><span class="fw-tag">Gems</span></div>
+    </div>
+
+    <div class="fw-card back-card">
+      <span class="fw-logo">🦄</span>
+      <div class="fw-name">NestJS</div>
+      <div class="lang-badge">TypeScript</div>
+      <p class="fw-desc">Framework Node.js con arquitectura Angular-like. Módulos, controladores, servicios y DI de fábrica.</p>
+      <div class="fw-tags"><span class="fw-tag">DI</span><span class="fw-tag">Decorators</span><span class="fw-tag">Módulos</span></div>
+    </div>
+
+    <div class="fw-card back-card">
+      <span class="fw-logo">🦀</span>
+      <div class="fw-name">Actix / Axum</div>
+      <div class="lang-badge">Rust</div>
+      <p class="fw-desc">Frameworks web en Rust. Rendimiento extremo, seguridad de memoria garantizada y concurrencia sin GC.</p>
+      <div class="fw-tags"><span class="fw-tag">Async</span><span class="fw-tag">Performance</span><span class="fw-tag">Safe</span></div>
+    </div>
+
+    <div class="fw-card back-card">
+      <span class="fw-logo">🐹</span>
+      <div class="fw-name">Gin / Fiber</div>
+      <div class="lang-badge">Go (Golang)</div>
+      <p class="fw-desc">Frameworks minimalistas en Go. Concurrencia nativa con goroutines. Compilado y ultraligero para microservicios.</p>
+      <div class="fw-tags"><span class="fw-tag">Goroutines</span><span class="fw-tag">Compilado</span><span class="fw-tag">gRPC</span></div>
+    </div>
+  </div>
+
+  <!-- Bottom info -->
+  <div class="bottom">
+    <div class="info-box">
+      <h3>Lenguajes más usados</h3>
+      <div class="lang-list">
+        <div class="lang-item"><div class="lang-dot" style="background:#f7df1e"></div><span class="lang-name">JavaScript</span><span class="lang-use">Frontend + Backend (Node.js)</span></div>
+        <div class="lang-item"><div class="lang-dot" style="background:#3178c6"></div><span class="lang-name">TypeScript</span><span class="lang-use">Frontend + Backend tipado</span></div>
+        <div class="lang-item"><div class="lang-dot" style="background:#3776ab"></div><span class="lang-name">Python</span><span class="lang-use">Backend + IA / ML / Data</span></div>
+        <div class="lang-item"><div class="lang-dot" style="background:#b07219"></div><span class="lang-name">Java</span><span class="lang-use">Backend enterprise, Android</span></div>
+        <div class="lang-item"><div class="lang-dot" style="background:#00add8"></div><span class="lang-name">Go</span><span class="lang-use">Backend microservicios, CLI</span></div>
+        <div class="lang-item"><div class="lang-dot" style="background:#dea584"></div><span class="lang-name">Rust</span><span class="lang-use">Backend sistemas, WebAssembly</span></div>
+        <div class="lang-item"><div class="lang-dot" style="background:#cc342d"></div><span class="lang-name">Ruby</span><span class="lang-use">Backend rápido (startups)</span></div>
+        <div class="lang-item"><div class="lang-dot" style="background:#0075bd"></div><span class="lang-name">Dart</span><span class="lang-use">Móvil / Desktop con Flutter</span></div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-icon">💡</div>
+      <div>
+        <h3>¿Cuál elegir?</h3>
+        <p style="margin-bottom:10px">No existe un framework perfecto. La elección depende de:</p>
+        <p><strong style="color:var(--front)">Frontend:</strong> React para ecosistemas grandes, Vue para curva suave, Angular para enterprise, Svelte para performance.</p>
+        <br>
+        <p><strong style="color:var(--back)">Backend:</strong> Node/NestJS si tu equipo ya sabe JS, Spring Boot para Java enterprise, FastAPI/Django para Python, Go/Rust para máxima performance.</p>
+        <br>
+        <p style="color:var(--muted)">En microservicios, <strong style="color:var(--text)">cada servicio puede usar su propio stack</strong> según sus necesidades específicas.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
